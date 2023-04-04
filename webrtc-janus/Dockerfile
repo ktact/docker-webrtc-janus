@@ -27,13 +27,19 @@ RUN apt-get update && apt-get install -y --fix-missing \
   graphviz \
   libnanomsg-dev \
   libunwind-dev \
-  cmake \
-  golang-go
+  cmake
+#cmake \
+#golang-go
 
 RUN apt-get install -y wget \
   && apt-get install -y vim \
   && apt-get install -y git \
   && apt-get install -y curl
+
+RUN cd ${BUILD_FOLDER} \
+  && wget https://go.dev/dl/go1.20.2.linux-amd64.tar.gz \
+  && tar -C /usr/local -xzf go1.20.2.linux-amd64.tar.gz \
+  && PATH="/usr/local/go/bin:$PATH"
 
 RUN PATH="/usr/local/bin:$PATH"
 RUN yes | apt-get install python3-pip
@@ -48,6 +54,7 @@ RUN cd ${BUILD_FOLDER} \
   && ninja -C build install
 
 RUN cd ${BUILD_FOLDER} \
+  && PATH="/usr/local/go/bin:$PATH" \
   && git clone https://boringssl.googlesource.com/boringssl --depth=1 \
   && cd boringssl \
   && sed -i s/" -Werror"//g CMakeLists.txt \
